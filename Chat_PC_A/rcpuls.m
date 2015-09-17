@@ -13,4 +13,6 @@ t = [-fliplr(t_positive(2:end)) t_positive];
 tpi = pi/tau; atpi = tpi*a; at = 4*a^2/tau^2;
 y = sin(tpi*t).*cos(atpi*t)./(tpi*t.*(1-at*t.^2));
 % norm_factor = sqrt(sum(y.^2));
-% y = y/norm_factor;   % Normlaize the pulse to have unit energy
+% y = y/norm_factor;   % Normlaize the pulse to have unit energy+
+
+plot(y)

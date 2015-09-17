@@ -6,6 +6,7 @@ B=200; % Maximal bandwith of 200Hz
 %% Raised cosine shape
 beta=0.3;
 Rs=ceil(2*B/(1+beta)); %Symbol rate that we can achieve according to the BW available
+Rs=floor(2*B/(1+beta)); %Symbol rate that we can achieve according to the BW available
 Ts=1/Rs;
 
 Fsrs=ceil(Fsample/Rs); % Number of sample in one symbol
@@ -15,6 +16,7 @@ symbols_up=upsample(symbols,Fsrs); %Upsample our symbols
 
 signal=conv(y,symbols_up); %convoluate the symbols with our pulse to have the sampled transmitted signal
 figure();plot(signal)
+figure();plot(real(signal))
 
 end
 

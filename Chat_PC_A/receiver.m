@@ -3,4 +3,6 @@ function [pack, psd, const, eyed] = receiver(tout,fc)
 disp('Complete the receiver') 
 pack = []; psd = [];  const=[]; eyed = [];
 
+%passband2baseband(tout,fc)
+
 end

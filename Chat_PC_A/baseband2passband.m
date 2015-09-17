@@ -10,7 +10,12 @@ y2=sqrt(2)*sin(2*pi*fc*t); %carrier signal Q : sin(2*pi*Fc*t)
 s1=real(signal_in).*y1; % multiply the real part with cos
 s2=imag(signal_in).*y2;  %multiply the imaginary part with sin
 
-signal_out=s1+j*s2; %the output signal is the addition of the tzo signal
+signal_out=s1+s2; %the output signal is the addition of the tzo signal
+
+N=length(signal_out);
+f=Fs/N*(-floor(N/2):1:ceil(N/2)-1);
+y_freq=fft(signal_out);
+figure();plot(f,20*log10(abs(fftshift(y_freq))/abs(max(y_freq))))
 
 end
 
