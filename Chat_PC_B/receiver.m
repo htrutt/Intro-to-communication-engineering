@@ -9,7 +9,7 @@ fsfd = ceil(fs/Rs);                         % Number of samples per symbol (choo
 span = 6;
 threshold = 0.2;                            % Used for decision making
 
-[N, signal_modulated] = signalRecording(tout, fs);
+Ts = 1/Rs;
 if N<=1000
     pack=[]; psd = []; const=[]; eyed = [];
 else
