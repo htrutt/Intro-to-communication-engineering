@@ -1,3 +1,3 @@
-matlab -nosplash -nodesktop -minimize -r Chat_PC_B_Rx
+matlab -nosplash -nodesktop -minimize -r Chat_PC_A_Rx
 
-matlab -nosplash -nodesktop -minimize -r Chat_PC_B_Tx
+matlab -nosplash -nodesktop -minimize -r Chat_PC_A_Tx
