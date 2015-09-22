@@ -1,7 +1,7 @@
 function [ mf_samp ] = matchedFilter( RC_puls, Icarrier_remove, Qcarrier_remove, fsfd )
 % Make the transmitted baseband signal go through a matched filter for
 % decision making
-MF_puls=fliplr(RC_puls);                            % Matched filter is a time-reversed pulse shaping filter 
+MF_puls = fliplr(RC_puls);                            % Matched filter is a time-reversed pulse shaping filter 
 figure;
 plot(MF_puls);
 mf=conv(MF_puls,Icarrier_remove+1j*Qcarrier_remove);% Make the signal through the matched filter

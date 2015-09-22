@@ -10,10 +10,10 @@ for i=1:length(final)
         finalbits(i,2)=1;
     elseif final(i,1)==-1 && final(i,2)==-1
         finalbits(i,1)=1;
-        finalbits(i,2)=0;
+        finalbits(i,2)=1;
     else
         finalbits(i,1)=1;
-        finalbits(i,2)=1;
+        finalbits(i,2)=0;
     end
 end
 finalbits=finalbits';
