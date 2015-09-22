@@ -4,12 +4,13 @@ fs = 12e3;                                  % sampling frequency [Hz]
 W = 200;                                    % bit rate [bit/sec]
 Beta = 0.3;
 Rs = 2*W/(Beta+1);
+Ts = 1/Rs;
 fsfd = ceil(fs/Rs);                         % Number of samples per symbol (choose fs such that fsfd is an integer for simplicity)
 
 span = 6;
 threshold = 0.2;                            % Used for decision making
 
-Ts = 1/Rs;
+[N, signal_modulated] = signalRecording(6, fs);
 if N<=1000
     pack=[]; psd = []; const=[]; eyed = [];
 else
