@@ -16,7 +16,7 @@ Ts = 1/Rs;
 Fsrs = ceil(Fsample/Rs); % Number of sample in one symbol
 symbols_up=upsample(symbols,Fsrs); %Upsample our symbols 
 
-[y, t] = rc_pulse(beta,Ts,Fsample); %generate the raised cosine pulse
+[y, t] = rcpuls(beta,Ts,Fsample,6); %generate the raised cosine pulse
 
 signal=conv(y,symbols_up); %convoluate the symbols with our pulse to have the sampled transmitted signal
 figure();plot(real(signal))
