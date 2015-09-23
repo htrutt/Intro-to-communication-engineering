@@ -8,7 +8,6 @@ Ts = 1/Rs;
 fsfd = ceil(fs/Rs);                         % Number of samples per symbol (choose fs such that fsfd is an integer for simplicity)
 
 span = 6;
-threshold = 0.2;                            % Used for decision making
 
 [N, signal_modulated] = signalRecording(6, fs);
 if N<=1000
