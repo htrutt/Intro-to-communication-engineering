@@ -6,21 +6,21 @@ mf_downsample = downsample(mf_samp, fsfd);          % Downsampling the signal af
 % [psd.p,psd.f]=pwelch(mf_downsample);                
 % figure;
 % plot(psd.f,20*log10(psd.p));                        % Plot the power spectral density
-realpart=real(mf_downsample);
-imagpart=imag(mf_downsample);
+
+s = [(1 + 1i) (1 - 1i) (-1 + 1i) (-1 - 1i)]/sqrt(2);% Constellation 1 - QPSK/4-QAM
 % Decision making progress
-for i=1:length(mf_downsample)
-    if realpart(i)>=threshold
-        Ifinal(i)=1;
-    else
-        Ifinal(i)=-1;
+Ifinal=zeros(length(mf_downsample));
+Qfinal=zeros(length(mf_downsample));
+    for i=1:length(mf_downsample)
+        D1=norm(s(1)-mf_downsample(k));%Calculate euclidean distance to each
+        D2=norm(s(2)-mf_downsample(k));%point of our constellation
+        D3=norm(s(3)-mf_downsample(k));
+        D4=norm(s(4)-mf_downsample(k));
+        D=[D1 D2 D3 D4]; %Put all the distance in one vector
+        [~, I]=min(D);   %Search for the index of the smallest value
+        Ifinal(k)=real(s(I)); %And use this index to determine which symbol was send
+        Qfinal(k)=imag(s(I));
     end
-    if imagpart(i)>=threshold
-        Qfinal(i)=1;
-    else
-        Qfinal(i)=-1;
-    end
-end
 
 end
 
