@@ -4,7 +4,7 @@ t=0:1/fs:(length(signal_modulated)-1)/fs;
 
 Icarrier_remove=sqrt(2)*signal_modulated'.*cos(2*pi*f_carrier*t);
 Qcarrier_remove=sqrt(2)*signal_modulated'.*sin(2*pi*f_carrier*t);
-signal_demodulated=Icarrier_remove+1j*Qcarrier_remove;
+signal_demodulated=Icarrier_remove+1i*Qcarrier_remove;
 N = length(signal_demodulated);
 P = fftshift(fft(signal_demodulated,N));                % Fourier tranform
 fvec = (fs/N)*(-floor(N/2):1:ceil(N/2)-1);
