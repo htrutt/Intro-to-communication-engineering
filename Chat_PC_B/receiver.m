@@ -16,7 +16,7 @@ else
     [Icarrier_remove, Qcarrier_remove] = passband2baseband(signal_modulated, fc, fs);
     RC_puls = rtrcpuls(Beta,Ts,fs,span);
     mf_samp = matchedFilter( RC_puls, Icarrier_remove, Qcarrier_remove, fsfd, fs );
-    [ Ifinal, Qfinal, mf_downsample ] = decisionMaking( mf_samp, fsfd, threshold );
+    [ Ifinal, Qfinal, mf_downsample ] = decisionMaking( mf_samp, fsfd );
     pack = symbols2bits( Ifinal, Qfinal );
     psd = pwelch(mf_downsample);
     const = mf_downsample;
