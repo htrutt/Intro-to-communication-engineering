@@ -1,6 +1,6 @@
 function [ N, audioData ] = signalRecording(tout, fs)
 % Record the voice signal
-recObj = audiorecorder(12e3,8,1);              % Set record object
+recObj = audiorecorder(fs,8,1);              % Set record object
 recordblocking(recObj,tout);
 audioData = getaudiodata(recObj);
 N = length(audioData);
