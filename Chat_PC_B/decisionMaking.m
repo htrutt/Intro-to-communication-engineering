@@ -1,4 +1,4 @@
-function [ Ifinal, Qfinal, mf_downsample ] = decisionMaking( mf_samp, fsfd, threshold )
+function [ Ifinal, Qfinal, mf_downsample ] = decisionMaking( mf_samp, fsfd )
 % Downsample the signal and make decision according to the specified
 % threshold to transfer the signal to symbols
 mf_downsample = downsample(mf_samp, fsfd);          % Downsampling the signal after matched filter
