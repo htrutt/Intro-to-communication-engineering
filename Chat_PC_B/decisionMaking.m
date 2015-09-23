@@ -9,8 +9,8 @@ mf_downsample = downsample(mf_samp, fsfd);          % Downsampling the signal af
 
 s = [(1 + 1i) (1 - 1i) (-1 + 1i) (-1 - 1i)]/sqrt(2);% Constellation 1 - QPSK/4-QAM
 % Decision making progress
-Ifinal=zeros(length(mf_downsample));
-Qfinal=zeros(length(mf_downsample));
+Ifinal=zeros(1,length(mf_downsample));
+Qfinal=zeros(1,length(mf_downsample));
     for i=1:length(mf_downsample)
         D1=norm(s(1)-mf_downsample(i));%Calculate euclidean distance to each
         D2=norm(s(2)-mf_downsample(i));%point of our constellation
