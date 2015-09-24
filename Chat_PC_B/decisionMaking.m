@@ -18,8 +18,8 @@ Qfinal=zeros(1,length(mf_downsample));
         D4=norm(s(4)-mf_downsample(i));
         D=[D1 D2 D3 D4]; %Put all the distance in one vector
         [~, I]=min(D);   %Search for the index of the smallest value
-        Ifinal(i)=real(s(I)); %And use this index to determine which symbol was send
-        Qfinal(i)=imag(s(I));
+        Ifinal(i)=sqrt(2)*real(s(I)); %And use this index to determine which symbol was send
+        Qfinal(i)=sqrt(2)*imag(s(I));
     end
 
 end
