@@ -9,7 +9,12 @@ fsfd = ceil(fs/Rs);                         % Number of samples per symbol (choo
 
 span = 6;
 
-[N, signal_modulated] = signalRecording(6, fs);
+thresh = 0;
+
+
+    [N, signal_modulated] = signalRecording(6, fs);
+    energy = hilbert(signal_modulated);
+    figure(); plot(real(energy))
 if N<=1000
     pack=[]; psd = []; const=[]; eyed = [];
 else

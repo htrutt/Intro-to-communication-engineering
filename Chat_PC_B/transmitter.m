@@ -11,6 +11,9 @@ fsfd = ceil(fs/Rs);                         % Number of samples per symbol (choo
 m = 2;
 span = 6;
 
+preamble = ones(1,20);
+packet = [preamble packet'];
+
 RRC_puls = rtrcpuls(Beta,Ts,fs,span);
 x_upsample = bits2symbols(packet, fsfd, m);
 pulse_tr_RRC_samp = pulseShaping(RRC_puls, x_upsample, fsfd, fs);
