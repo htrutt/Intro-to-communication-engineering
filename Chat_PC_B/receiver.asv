@@ -14,7 +14,6 @@ energy=0;
 while energy<threshold
     [N, signal_modulated] = signalRecording(2*Ts, fs);
     energy=(norm(signal_modulated)^2)/N;
-    sprintf('Energy %f',energy);
 end
     [Icarrier_remove, Qcarrier_remove] = passband2baseband(signal_modulated, fc, fs);
     RC_puls = rtrcpuls(Beta,Ts,fs,span);
