@@ -30,11 +30,11 @@ if timeElapsed < tout
     pvalue = 10*log10(pvalue);
     psd = struct('p',pvalue,'f',fvalue);
     const = info_samp;  % after downsampling
-    eyed = [info_samp, fsrs];
+    eyed = struct('r',info_samp,'fsfd',fsrs);
 else
     Xhat = [];
-    psd = struct('p',0,'f',0);
+    psd = struct('p',[],'f',[]);
     const = [];
-    eyed = [];
+    eyed = struct('r',[],'fsfd',[]);
 end
 end
