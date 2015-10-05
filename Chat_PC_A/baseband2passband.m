@@ -1,21 +1,16 @@
-function [ signal_out ] = baseband2passband( signal_in, fc )
-%% This function Multiply the signal with our carrier frequency
-% We use an IQ modulator 
-Fs=12e3;
-t=0:1/Fs:(size(signal_in,2)-1)/Fs; %we want our carrier signal to be as long as the signal_in
-
-y1=sqrt(2)*cos(2*pi*fc*t); %carrier signal I : cos(2*pi*Fc*t)
-y2=sqrt(2)*sin(2*pi*fc*t); %carrier signal Q : sin(2*pi*Fc*t)
-
-s1=real(signal_in).*y1; % multiply the real part with cos
-s2=imag(signal_in).*y2;  %multiply the imaginary part with sin
-
-signal_out=s1+s2; %the output signal is the addition of the tzo signal
-
-N=length(signal_out);
-f=Fs/N*(-floor(N/2):1:ceil(N/2)-1);
-y_freq=fft(signal_out);
-figure();plot(f,20*log10(abs(fftshift(y_freq))/abs(max(y_freq))))
+function [ signal_modulated ] = baseband2passband( pulse_tr_RC_samp, f_carrier, fs )
+% Move the tranmitted signal to the carrier
+t=0:1/fs:(length(pulse_tr_RC_samp)-1)/fs;
+% Modulation
+Icarrier = sqrt(2)*(real(pulse_tr_RC_samp)).*cos(2*pi*f_carrier*t);     
+Qcarrier = sqrt(2)*(imag(pulse_tr_RC_samp)).*sin(2*pi*f_carrier*t);
+signal_modulated=Icarrier+Qcarrier;
+signal_modulated = signal_modulated./abs(max(signal_modulated)); % Normalization          
+% N = length(signal_modulated);
+% P = fftshift(fft(signal_modulated,N));                       % Fourier transform
+% fvec = (fs/N)*(-floor(N/2):1:ceil(N/2)-1);
+% figure;
+% plot(fvec,20*log10(abs(P)));
 
 end
 
