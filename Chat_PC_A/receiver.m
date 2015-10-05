@@ -1,4 +1,4 @@
-function [pack, psd, const, eyed] = receiver(tout,fc)
+function [Xhat, psd, const, eyed] = receiver(tout,fc)
 
 fs = 12e3;                                   % sampling frequency [Hz]
 rb = 600;                                    % bit rate [bit/sec]
@@ -19,18 +19,21 @@ if timeElapsed < tout
     mf_samp = matchedFilter( RC_puls, Icarrier_remove, Qcarrier_remove, fsrs);
     mf_sync = symbolSync( syncSymbol, fsrs, mf_samp );
     mf_downsample = downsample(mf_sync, fsrs);          % Downsampling the signal after matched filter
-    mf_downsample = mf_downsample(1:end-1);
     mf_phase = phaseSync( syncSymbol, mf_downsample );
     [ Ifinal, Qfinal ] = decisionMaking( mf_phase );
     Xhat = symbols2bits( Ifinal, Qfinal, mf_phase );
     bitsRestore = frameSync( Xhat, syncBits );
-    pack = bitsRestore(length(syncBits)+1:end);
-    psd = pwelch(mf_phase);
-    const = mf_phase;
-    eyed = [mf_phase, fsrs];
+    info_samp = mf_phase(length(syncSymbol)+1:length(syncSymbol)+216);
+    Xhat = bitsRestore(length(syncBits)+1:end); % received information bits
+    [pvalue,fvalue] = pwelch(signal_modulated,window,[],2048,fs); % received signal
+    pvalue = pvalue/max(pvalue);
+    pvalue = 10*log10(pvalue);
+    psd = struct('p',pvalue,'f',fvalue);
+    const = info_samp;  % after downsampling
+    eyed = [info_samp, fsrs];
 else
-    pack = [];
-    psd = [];
+    Xhat = [];
+    psd = struct('p',0,'f',0);
     const = [];
     eyed = [];
 end
