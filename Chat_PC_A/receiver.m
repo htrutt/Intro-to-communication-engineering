@@ -25,7 +25,7 @@ if timeElapsed < tout
     bitsRestore = frameSync( Xhat, syncBits );
     info_samp = mf_phase(length(syncSymbol)+1:length(syncSymbol)+216);
     Xhat = bitsRestore(length(syncBits)+1:end); % received information bits
-    [pvalue,fvalue] = pwelch(signal_modulated,window,[],2048,fs); % received signal
+    [pvalue,fvalue] = pwelch(signal_modulated,[],[],2048,fs); % received signal
     pvalue = pvalue/max(pvalue);
     pvalue = 10*log10(pvalue);
     psd = struct('p',pvalue,'f',fvalue);
