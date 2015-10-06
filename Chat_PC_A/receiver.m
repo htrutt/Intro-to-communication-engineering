@@ -9,8 +9,11 @@ fsrs = fs/rs;                                % Number of samples per symbol (cho
 
 load('syncBits.mat')
 load('syncSymbol.mat')
-load('marker_modulated.mat')
 load('RC_puls.mat')
+barkerBits = [0 0 0 0 0 1 1 0 0 1 0 1 0];
+markerBits= repmat(barkerBits,1,2);
+marker_modulated=generate_modulated_signal(fc,markerBits,rb);
+
 tic
 signal_modulated = signalRecording(rs, fs ,marker_modulated);
 timeElapsed = toc;

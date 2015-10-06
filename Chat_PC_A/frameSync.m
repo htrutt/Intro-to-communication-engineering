@@ -6,7 +6,7 @@ for m=0:length(syncBits)-1
     end
 end
 [~,idx]=max(c);
-pack = Xhat(idx:(idx+length(syncBits)+432-1));
+pack = Xhat(1:(1+length(syncBits)+432-1));
 
 end
 

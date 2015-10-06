@@ -4,11 +4,11 @@ threshold = 10;
 recObj = audiorecorder(fs,8,1);              % Set record object
 
 while max(cor)<threshold
-   recordblocking(recObj,7/rs);
+   recordblocking(recObj,13/rs);
    signal_modulated = getaudiodata(recObj);
    cor=xcorr(signal_modulated, marker_modulated);
 end
-recordblocking(recObj,300/rs);
+recordblocking(recObj,400/rs);
 signal_modulated = getaudiodata(recObj);
 signal_modulated=signal_modulated';
 end

@@ -12,7 +12,7 @@ rs = rb/m;                                   % Symbol rate
 fsrs = fs/rs;                                % Number of samples per symbol (choose fs such that fsfd is an integer for simplicity)
 packet = packet';
 barkerBits = [0 0 0 0 0 1 1 0 0 1 0 1 0];
-markerBits = repmat(barkerBits, 1, 16);      % Duplicate barkerbits to 16 times
+markerBits = repmat(barkerBits, 1, 10);      % Duplicate barkerbits to 16 times
 load('syncBits.mat')                         % 68 bits synchonization bits
 dataBits = [markerBits, syncBits, packet];
 
