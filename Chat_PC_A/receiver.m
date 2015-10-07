@@ -10,9 +10,10 @@ fsrs = fs/rs;                                % Number of samples per symbol (cho
 load('syncBits.mat')
 load('syncSymbol.mat')
 load('RC_puls.mat')
+ 
 barkerBits = [0 0 0 0 0 1 1 0 0 1 0 1 0];
 markerBits= repmat(barkerBits,1,2);
-marker_modulated=generate_modulated_signal(fc,markerBits,rb);
+marker_modulated=generate_modulated_signal(fc,markerBits,rb, RC_puls);
 
 tic
 signal_modulated = signalRecording(rs, fs ,marker_modulated);
@@ -28,12 +29,12 @@ if timeElapsed < tout
     bitsRestore = frameSync( Xhat, syncBits );
     info_samp = mf_phase(length(syncSymbol)+1:length(syncSymbol)+216);
     Xhat = bitsRestore(length(syncBits)+1:end); % received information bits
-    [pvalue,fvalue] = pwelch(signal_modulated,[],[],2048,fs); % received signal
+    [pvalue,fvalue] = pwelch(Icarrier_remove+Qcarrier_remove,[],[],2048,fs); % received signal
     pvalue = pvalue/max(pvalue);
     pvalue = 10*log10(pvalue);
     psd = struct('p',pvalue,'f',fvalue);
     const = info_samp;  % after downsampling
-    eyed = struct('r',info_samp,'fsfd',fsrs);
+    eyed = struct('r',mf_sync(34*fsrs:216*fsrs),'fsfd',fsrs);
 else
     Xhat = [];
     psd = struct('p',[],'f',[]);
