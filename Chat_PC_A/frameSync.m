@@ -1,4 +1,5 @@
 function [ pack ] = frameSync( Xhat, syncBits )
+
 c=zeros(1,length(syncBits)+1);
 for m=0:length(syncBits)-1
     for i=1:length(syncBits)
