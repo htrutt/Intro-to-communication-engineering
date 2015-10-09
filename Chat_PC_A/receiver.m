@@ -1,40 +1,58 @@
 function [Xhat, psd, const, eyed] = receiver(tout,fc)
 
-fs = 12e3;                                   % sampling frequency [Hz]
-rb = 600;                                    % bit rate [bit/sec]
-M = 4;                                       % Number of symbols in the constellation (QPSK, M=4)
-m = log2(M);                                 % Number of bits per symbol
-rs = rb/m;                                   % Symbol rate
-fsrs = fs/rs;                                % Number of samples per symbol (choose fs such that fsfd is an integer for simplicity)
-
-load('syncBits.mat')
-load('syncSymbol.mat')
-load('RC_puls.mat')
- 
-barkerBits = [0 0 0 0 0 1 1 0 0 1 0 1 0];
-markerBits= repmat(barkerBits,1,2);
-marker_modulated=generate_modulated_signal(fc,markerBits,rb, RC_puls);
+%% Loading all the necessary parameters for the receiver
+run('./parameters');
+load('syncSymbol.mat')                      % Synchronization bits
+markerBits= repmat(barkerBits,1,2);         % Marker bits using for signal detection
+marker_modulated=generate_modulated_signal(fc,markerBits,rb, RRC_puls);
 
 tic
+%% Signal detection using barker sequence and signal recording 
 signal_modulated = signalRecording(rs, fs ,marker_modulated);
+
+
 timeElapsed = toc;
 if timeElapsed < tout
+    
+    %% Down conversion from carrier frequency fc to baseband
     [Icarrier_remove, Qcarrier_remove] = passband2baseband(signal_modulated, fc, fs);
-    mf_samp = matchedFilter( RC_puls, Icarrier_remove, Qcarrier_remove, fsrs);
-    mf_sync = symbolSync( syncSymbol, fsrs, mf_samp );
-    mf_downsample = downsample(mf_sync, fsrs);          % Downsampling the signal after matched filter
+    
+    %% Match filtering our signal 
+    mf_signal = matchedFilter( RRC_puls, Icarrier_remove, Qcarrier_remove, fsrs);
+    
+    %% Symbol/sample synchronization using our synhronization bits
+    mf_sync = symbolSync( syncSymbol, fsrs, mf_signal );
+    
+    %% Downsampling the signal after matched filter
+    mf_downsample = downsample(mf_sync, fsrs);        
+    
+    %% Applying phase synchronization to our signal 
     mf_phase = phaseSync( syncSymbol, mf_downsample );
+    
+    %% Decision making for our estimated symbols using minimum distance decoder
     [ Ifinal, Qfinal ] = decisionMaking( mf_phase );
-    Xhat = symbols2bits( Ifinal, Qfinal, mf_phase );
+    
+    %% Converting symbols to bits
+    Xhat = symbols2bits( Ifinal, Qfinal, mf_phase);
+    
+    %% Use our synchronization bits to do frame synchronization
     bitsRestore = frameSync( Xhat, syncBits );
-    info_samp = mf_phase(length(syncSymbol)+1:length(syncSymbol)+216);
-    Xhat = bitsRestore(length(syncBits)+1:end); % received information bits
+    %TODO : check the frame sync
+ 
+    %% received information bits
+    Xhat = bitsRestore(length(syncBits)+1:end); 
+    
+    %% PSD plot
     [pvalue,fvalue] = pwelch(Icarrier_remove+Qcarrier_remove,[],[],2048,fs); % received signal
-    pvalue = pvalue/max(pvalue);
-    pvalue = 10*log10(pvalue);
+    pvalue = 10*log10( pvalue/max(pvalue));                                  % normalising our plot
     psd = struct('p',pvalue,'f',fvalue);
-    const = info_samp;  % after downsampling
+    
+    %% Constellation plot 
+    const = mf_phase(length(syncSymbol)+1:length(syncSymbol)+216);  % signal after phase synchronisation and before downsampling
+    
+    % Eyediagram plot 
     eyed = struct('r',mf_sync(34*fsrs:216*fsrs),'fsfd',fsrs);
+    
 else
     Xhat = [];
     psd = struct('p',[],'f',[]);

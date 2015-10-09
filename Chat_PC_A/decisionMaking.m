@@ -1,7 +1,12 @@
 function [ Ifinal, Qfinal ] = decisionMaking( mf_phase )
-s = [(1 + 1i) (1 - 1i) (-1 + 1i) (-1 - 1i)]/sqrt(2);
+%% Function estimating the symbols transmitted using the minimum distance
+%mf_phase = signal after phase synchronisation
+
+s = [(1 + 1i) (1 - 1i) (-1 + 1i) (-1 - 1i)]/sqrt(2);    %QPSK constellation
+
 Ifinal=zeros(1,length(mf_phase));
 Qfinal=zeros(1,length(mf_phase));
+
 for i=1:length(mf_phase)
     D1=norm(s(1)-mf_phase(i));%Calculate euclidean distance to each
     D2=norm(s(2)-mf_phase(i));%point of our constellation
