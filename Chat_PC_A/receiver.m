@@ -15,10 +15,10 @@ timeElapsed = toc;
 if timeElapsed < tout
     
     %% Down conversion from carrier frequency fc to baseband
-    [Icarrier_remove, Qcarrier_remove] = passband2baseband(signal_modulated, fc, fs);
+    carrier_remove = passband2baseband(signal_modulated, fc, fs);
     
     %% Match filtering our signal 
-    mf_signal = matchedFilter( RRC_puls, Icarrier_remove, Qcarrier_remove, fsrs);
+    mf_signal = matchedFilter( RRC_puls, carrier_remove, fsrs);
     
     %% Symbol/sample synchronization using our synhronization bits
     mf_sync = symbolSync( syncSymbol, fsrs, mf_signal );
@@ -43,7 +43,7 @@ if timeElapsed < tout
     Xhat = bitsRestore(length(syncBits)+1:end); 
     
     %% PSD plot
-    [pvalue,fvalue] = pwelch(Icarrier_remove+Qcarrier_remove,[],[],2048,fs); % received signal
+    [pvalue,fvalue] = pwelch(carrier_remove,[],[],length(carrier_remove),fs,'centered'); % received signal
     pvalue = 10*log10( pvalue/max(pvalue));                                  % normalising our plot
     psd = struct('p',pvalue,'f',fvalue);
     
