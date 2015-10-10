@@ -17,7 +17,7 @@ dataBits = [markerBits, syncBits, packet];     % 10 Barker seq + 1 rand seq + me
 x_upsample = bits2symbols(dataBits, fsrs, m);   % Bits to symbols
 
 %% Pulse shapping our symbols using our RRC pulse
-pulse_tr_RC_samp = pulseShaping(RRC_puls, x_upsample, fsrs, fs); % Pulse shaping
+pulse_tr_RC_samp = pulseShaping(RRC_puls, x_upsample, fsrs); % Pulse shaping
 
 %% Modulate our signal around our carrier frequency fc
 signal_modulated = baseband2passband(pulse_tr_RC_samp ,fc, fs); % Modulation
