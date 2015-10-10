@@ -2,7 +2,7 @@
 % transmitter
 
 fs = 12e3;                                   % sampling frequency [Hz]
-rb = 600;                                    % bit rate [bit/sec]
+rb = 500;                                    % bit rate [bit/sec]
 M = 4;                                       % Number of symbols in the constellation (QPSK, M=4)
 m = log2(M);                                 % Number of bits per symbol
 rs = rb/m;                                   % Symbol rate
