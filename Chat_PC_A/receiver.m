@@ -33,14 +33,14 @@ if timeElapsed < tout
     [ Ifinal, Qfinal ] = decisionMaking( mf_phase );
     
     %% Converting symbols to bits
-    Xhat = symbols2bits( Ifinal, Qfinal, mf_phase);
+    bitsConverted = symbols2bits( Ifinal, Qfinal, mf_phase);
     
     %% Use our synchronization bits to do frame synchronization
-    bitsRestore = frameSync( Xhat, syncBits );
+    %bitsRestore = frameSync( Xhat, syncBits );
     %TODO : check the frame sync
  
     %% received information bits
-    Xhat = bitsRestore(length(syncBits)+1:end); 
+    Xhat = bitsConverted(length(syncBits)+1:length(syncBits)+432); 
     
     %% PSD plot
     [pvalue,fvalue] = pwelch(carrier_remove,[],[],length(carrier_remove),fs,'centered'); % received signal
