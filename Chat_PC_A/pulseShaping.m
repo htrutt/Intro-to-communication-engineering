@@ -1,4 +1,4 @@
-function [ pulse_tr_RC_samp ] = pulseShaping( RC_puls, x_upsample, fsfd, fs )
+function [ pulse_tr_RC_samp ] = pulseShaping( RC_puls, x_upsample, fsfd )
 % Make the transmitted signal gp through a pulse shaping filter to limit
 % its bandwidth
 pulse_tr_RC = conv(RC_puls,x_upsample);
