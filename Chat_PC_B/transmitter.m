@@ -1,23 +1,28 @@
-function transmitter(packet,fc)
-% Parameters below like "rb","fd" can be caculated by the fomular BW =
+  function transmitter(packet,fc)
+% packet: information bits to be tranmistted
+% fc: carrier frequency
+% Parameters below like "rb","rs" can be caculated by the fomular BW =
 % (1+alpha)/(2*tau) as well. 
-fs = 12e3;                                  % sampling frequency [Hz]
-W = 200;                                    % bit rate [bit/sec]
-Beta = 0.3;
-Rs = 2*W/(Beta+1);
-Ts = 1/Rs;
-fsfd = ceil(fs/Rs);                         % Number of samples per symbol (choose fs such that fsfd is an integer for simplicity)
+% In the situation below the BW = (1+0.4)/(2*1/rs) = 210;
 
-m = 2;
-span = 6;
+%% Loading all the needed parameters
+run('parameters.m');                           % Loads all the parameters necessary
+markerBits = repmat(barkerBits, 1, 12);        % Duplicate barkerbits to 10 times for preamble
 
-preamble = ones(1,20);
-packet = [preamble packet'];
+%% Add preamble to our message
+packet = packet';
+dataBits = [markerBits, syncBits, packet];     % 10 Barker seq + 1 rand seq + message
 
-RRC_puls = rtrcpuls(Beta,Ts,fs,span);
-x_upsample = bits2symbols(packet, fsfd, m);
-pulse_tr_RRC_samp = pulseShaping(RRC_puls, x_upsample, fsfd, fs);
-signal_modulated = baseband2passband(pulse_tr_RRC_samp ,fc, fs);
+%% Converting message bits to symbol and upsampling 
+x_upsample = bits2symbols(dataBits, fsrs, m);   % Bits to symbols
+
+%% Pulse shapping our symbols using our RRC pulse
+pulse_tr_RC_samp = pulseShaping(RRC_puls, x_upsample, fsrs, fs); % Pulse shaping
+
+%% Modulate our signal around our carrier frequency fc
+signal_modulated = baseband2passband(pulse_tr_RC_samp ,fc, fs); % Modulation
+
+%% Play the signal as a sound
 sound(signal_modulated,fs);                  % Play the transmitted signal
-
+audiowrite('trial.wav',signal_modulated,fs);
 end
