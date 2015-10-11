@@ -7,7 +7,7 @@
 
 %% Loading all the needed parameters
 run('parameters.m');                           % Loads all the parameters necessary
-markerBits = repmat(barkerBits, 1, 12);        % Duplicate barkerbits to 10 times for preamble
+markerBits = repmat(barkerBits, 1, 10);        % Duplicate barkerbits to 10 times for preamble
 
 %% Add preamble to our message
 packet = packet';
