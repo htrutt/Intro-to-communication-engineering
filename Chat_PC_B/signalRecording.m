@@ -15,7 +15,7 @@ while max(cor)<threshold
    cor=xcorr(signal_modulated, marker_modulated); %Corrolate this data with our modulated barker sequence
 end
    %% Preamble as been detected so we record for a longer time in order to get our message
-recordblocking(recObj,700/rb);
+recordblocking(recObj,600/rb);
 signal_modulated = getaudiodata(recObj);
 signal_modulated=signal_modulated';
 end
