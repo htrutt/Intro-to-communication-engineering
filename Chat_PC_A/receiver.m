@@ -28,7 +28,7 @@ if timeElapsed < tout
     
     timeDiff = lag(I)
     %% Applying phase synchronization to our signal 
-    mf_phase = phaseSync2( syncSymbol, mf_downsample, timeDiff );
+    [mf_phase, phihat] = phaseSync2( syncSymbol, mf_downsample, timeDiff );
     
     %% Decision making for our estimated symbols using minimum distance decoder
     [ Ifinal, Qfinal ] = decisionMaking( mf_phase );
@@ -54,7 +54,7 @@ if timeElapsed < tout
     
     % Eyediagram plot 
     signal_end = ceil(480/rb*12000);      % make an approxiamtion
-    eyed = struct('r',mf_signal(tsamp:signal_end),'fsfd',fsrs);
+    eyed = struct('r',mf_signal(tsamp:signal_end)*exp(-1j*phihat),'fsfd',fsrs);
     
     % Used for testing without UI
 %     diff=infoBits-Xhat;
