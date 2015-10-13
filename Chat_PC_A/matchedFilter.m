@@ -1,4 +1,4 @@
-function [ mf_samp ] = matchedFilter( RRC_puls, Icarrier_remove, Qcarrier_remove, fsrs)
+function [ mf_samp ] = matchedFilter( RRC_puls, carrier_remove, fsrs)
 %% Make the transmitted baseband signal go through a matched filter
 % RRC_puls = root raised cosine used for the matched filtering
 % ICarrier_remove = In-phase signal in baseband 
@@ -6,7 +6,7 @@ function [ mf_samp ] = matchedFilter( RRC_puls, Icarrier_remove, Qcarrier_remove
 % fsfd = oversampling factor 
 
 MF_puls=fliplr(RRC_puls);                            % Matched filter is a time-reversed pulse shaping filter 
-mf=conv(MF_puls,Icarrier_remove+1j*Qcarrier_remove);% Make the signal through the matched filter
+mf=conv(MF_puls,carrier_remove);% Make the signal through the matched filter
 mf_samp = mf(fsrs*6:end-fsrs*5);
 
 % eyed.fsfd=fsfd;

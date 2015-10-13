@@ -12,8 +12,7 @@ infoLen = 432;
 % number of bits to transmit
 % Constellation or bit to symbol mapping
 s = [(1 + 1i) (1 - 1i) (-1 + 1i) (-1 - 1i)]/sqrt(2); % Constellation 1 - QPSK/4-QAM
-                                                    % s = exp(1i*((0:3)*pi/2 + pi/4)); % Constellation 1 - same constellation generated as PSK
-scatterplot(s); grid on;                            % Constellation visualization
+                                                    % s = exp(1i*((0:3)*pi/2 + pi/4));
 M = length(s);                                      % Number of symbols in the constellation
 m = log2(M);                                        % Number of bits per symbol
 fd = rb/m;                                          % Symbol rate
@@ -21,8 +20,12 @@ fsfd = fs/fd;                                       % Number of samples per symb
 rng('shuffle')
 infoBits = randsrc(1,infoLen,[0 1]);
 % Information bits
-dataBits = [ones(1,18), infoBits];
-syncBits = ones(1,18);
+barkerBits = [0 0 0 0 0 1 1 0 0 1 0 1 0];
+markerBits = [barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits barkerBits];
+syncBits = randsrc(1,68,[0,1]);
+% syncBits = zeros(1,18);
+Bits = [syncBits, infoBits];
+dataBits = [markerBits, syncBits, infoBits];
 b_buffer = buffer(dataBits, m)';                           % Group bits into bits per symbol
 sym_idx = bi2de(b_buffer, 'left-msb')'+1;           % Bits to symbol index
 x = s(sym_idx);                                     % Look up symbols using the indices  
@@ -39,7 +42,7 @@ P = fftshift(fft(pulse_tr_RC_samp,N));              % Fourier transform
 fvec = (fs/N)*(-floor(N/2):1:ceil(N/2)-1);
 figure; plot(fvec,20*log10(abs(P)));
 %% Carrier
-f_carrier=2000;                                     % Carrier frequency
+f_carrier=3000;                                     % Carrier frequency
 t=0:1/fs:(length(pulse_tr_RC_samp)-1)/fs;
 % Modulation
 Icarrier = sqrt(2)*(real(pulse_tr_RC_samp)).*cos(2*pi*f_carrier*t);     
@@ -50,7 +53,16 @@ P = fftshift(fft(carrier,N));                       % Fourier transform
 fvec = (fs/N)*(-floor(N/2):1:ceil(N/2)-1);
 figure;
 plot(fvec,20*log10(abs(P)));
-sound(carrier,fs);                                  % Play the transmitted signal
+carrier = carrier./abs(max(carrier));
+% marker_frequency = 8e3;
+marker_upsample = bits2symbols(markerBits, fsfd, m);
+pulse_marker = pulseShaping(RC_puls, marker_upsample, fsfd, fs);
+marker_modulated = baseband2passband(pulse_marker ,f_carrier, fs);
+marker_modulated = marker_modulated./abs(max(marker_modulated));
+% sound(marker_modulated,fs);                                  % Play the transmitted signal
+% sound(carrier,fs);  
+% audio = [marker_modulated, carrier];
+% sound(audio,fs);
 audiowrite('trial.wav',carrier,fs)
 %% Signal through AWGN
 % snr=100;                                             % Signal-to-noise ratio
@@ -60,8 +72,24 @@ audiowrite('trial.wav',carrier,fs)
 % P_noise = fftshift(fft(carrier_noise,N));           % Fourier transform
 % figure;
 % plot(fvec,20*log10(abs(P_noise)));
-
-[trial, carrier_noise] = signalRecording(5, fs);
+cor=0;
+threshold = 10;
+recObj = audiorecorder(fs,8,1);              % Set record object
+% recordblocking(recObj,tout);
+% audioData = getaudiodata(recObj);
+while max(cor)<threshold
+   record(recObj,7/fd);
+   stop(recObj);
+   signal_modulated = getaudiodata(recObj);
+%    signal_modulated = signalRecording(10/fd, fs);
+   cor=xcorr(signal_modulated, marker_modulated);
+end
+figure();
+plot(abs(cor));
+recordblocking(recObj,300/fd);
+carrier_noise = getaudiodata(recObj);
+figure();
+plot(carrier_noise);
 % envelope = abs(hilbert(carrier_noise));
 % figure;
 % plot(envelope); % used for detect where voice signal begins
@@ -69,7 +97,7 @@ audiowrite('trial.wav',carrier,fs)
 % Demodulation
 % Icarrier_remove=sqrt(2)*real(carrier_noise).*cos(2*pi*f_carrier*t);
 % Qcarrier_remove=sqrt(2)*imag(carrier_noise).*sin(2*pi*f_carrier*t);
-t=0:1/fs:(5-1/fs);
+t=0:1/fs:((length(carrier_noise)-1)/fs);
 Icarrier_remove=sqrt(2)*carrier_noise'.*cos(2*pi*f_carrier*t);
 Qcarrier_remove=sqrt(2)*carrier_noise'.*sin(2*pi*f_carrier*t);
 carrier_remove=Icarrier_remove+Qcarrier_remove;
@@ -92,17 +120,29 @@ P_mf = fftshift(fft(mf_samp,N));                    % Fourier transform
 fvec = (fs/N)*(-floor(N/2):1:ceil(N/2)-1);
 figure;
 plot(fvec,20*log10(abs(P_mf)));
-
+figure;
+plot(real(mf_samp));
 %% Symbol Synchronization
 
-% some little fluctuation need to be removed before the real data signal
-mf_samp = mf_samp(real(mf_samp)~=0);
-syncSymbol = x(1:length(syncBits)/2);
+syncSymbol = x(105:length(syncBits)/2+105-1);
+sum = zeros(1,10000);
+for tsamp=1:6000
+    for k=1:length(syncSymbol)
+        sum(tsamp)=sum(tsamp)+mf_samp((k-1)*fsfd+tsamp)*conj(syncSymbol(k));
+    end
+end
+[~,tsamp]=max(abs(sum));
+mf_samp2 = mf_samp(tsamp:end);
+figure;
+plot(real(mf_samp2));
+eyed.fsfd=fsfd;
+eyed.r=mf_samp2;
+eyediagram(eyed.r, eyed.fsfd); 
 % [acor,lag] = xcorr(mf_samp,syncSymbol);
 % [~,I] = max(abs(acor));
 % timeDiff = lag(I);
 %% Decision making (Sample at Ts)
-mf_downsample = downsample(mf_samp, fsfd);          % Downsampling the signal after matched filter
+mf_downsample = downsample(mf_samp2, fsfd);          % Downsampling the signal after matched filter
 mf_downsample = mf_downsample(1:end-1);
 % mf_downsample = mf_samp(timeDiff:fsfd:timeDiff+fsfd*(length(dataBits)/2-1));
 scatterplot(mf_downsample); grid on;                % Plot the constellation of the signal after downsampling
@@ -111,6 +151,7 @@ scatterplot(mf_downsample); grid on;                % Plot the constellation of 
 figure;
 plot(psd.f,20*log10(psd.p));                        % Plot the power spectral density
 
+% Phase Synchronization
 sumArg = 0;
 conjSync = conj(syncSymbol);
 for k =1:length(conjSync)
@@ -168,13 +209,20 @@ for i=1:length(final)
 end
 finalbits=finalbits';
 Xhatt=reshape(finalbits,1,length(final)*2);
-%% Frame detection
-syncBits = ones(1,9);
-corr = conv(Xhatt,fliplr(syncBits));
-[tmp, idx] = max(corr);
-delay_hat = idx - length(syncBits);
-Xhat = Xhatt(1+delay_hat:length(dataBits)+delay_hat);
+%% Frame Synchonization
+% corr = conv(Xhatt,fliplr(syncBits));
+% [tmp, idx] = max(corr);
+% Xhat = Xhatt(1+idx:length(Bits)+idx);
+
+c=zeros(1,length(syncBits)+1);
+for m=0:length(syncBits)-1
+    for i=1:length(syncBits)
+    c(m+1) = c(m+1) + syncBits(i)*Xhatt(i+m);
+    end
+end
+[~,idx]=max(c);
+Xhat = Xhatt(idx:idx+length(Bits)-1);
 %% Calculating the error rate
-diff=dataBits-Xhat;
+diff=Bits-Xhat;
 error=find(diff~=0);
 errorrate=length(error)/length(Xhat);

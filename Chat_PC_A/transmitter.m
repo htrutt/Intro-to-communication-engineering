@@ -6,8 +6,8 @@
 % In the situation below the BW = (1+0.4)/(2*1/rs) = 210;
 
 %% Loading all the needed parameters
-run('./parameters');                           % Loads all the parameters necessary
-markerBits = repmat(barkerBits, 1, 10);        % Duplicate barkerbits to 10 times for preamble
+run('parameters.m');                           % Loads all the parameters necessary
+markerBits = repmat(barkerBits, 1, 20);        % Duplicate barkerbits to 10 times for preamble
 
 %% Add preamble to our message
 packet = packet';
@@ -24,5 +24,5 @@ signal_modulated = baseband2passband(pulse_tr_RC_samp ,fc, fs); % Modulation
 
 %% Play the signal as a sound
 sound(signal_modulated,fs);                  % Play the transmitted signal
-
+%audiowrite('trial.wav',signal_modulated,fs);
 end

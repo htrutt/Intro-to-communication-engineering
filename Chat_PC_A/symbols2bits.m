@@ -1,7 +1,7 @@
-function [ Xhat ] = symbols2bits( Ifinal, Qfinal, mf_phase )
+function [ Xhat ] = symbols2bits( Ifinal, Qfinal)
 % Transfer the symbols back to data bits
 final=[Ifinal(1:end)',Qfinal(1:end)'];
-finalbits=zeros(length(mf_phase),2);
+finalbits=zeros(length(Ifinal),2);
 for i=1:length(final)
     if final(i,1)==1 && final(i,2)==1
         finalbits(i,1)=0;
