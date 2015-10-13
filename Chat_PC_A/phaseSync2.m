@@ -1,4 +1,4 @@
-function [ mf_phase ] = phaseSync2( syncSymbol, mf_downsample, timeDiff)
+function [ mf_phase, phihat ] = phaseSync2( syncSymbol, mf_downsample, timeDiff)
 sumArg = 0;
 conjSync = conj(syncSymbol);
 
