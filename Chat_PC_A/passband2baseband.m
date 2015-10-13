@@ -1,10 +1,10 @@
-function [ Icarrier_remove, Qcarrier_remove ] = passband2baseband( signal_modulated, f_carrier, fs )
+function [ carrier_remove ] = passband2baseband( signal_modulated, f_carrier, fs )
 %% Move the modulated signal to baseband to demodulate it
 
 t=0:1/fs:(length(signal_modulated)-1)/fs;
 Icarrier_remove=sqrt(2)*signal_modulated.*cos(2*pi*f_carrier*t);
 Qcarrier_remove=sqrt(2)*signal_modulated.*sin(2*pi*f_carrier*t);
-
+carrier_remove=Icarrier_remove+1j*Qcarrier_remove;
 % signal_demodulated=Icarrier_remove+Qcarrier_remove;
 % N = length(signal_demodulated);
 % P = fftshift(fft(signal_demodulated,N));                % Fourier tranform
