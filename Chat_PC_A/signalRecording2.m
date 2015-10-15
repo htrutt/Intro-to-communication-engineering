@@ -27,6 +27,6 @@ end
 pause(500/rb);
 stop(recObj);
 signal = getaudiodata(recObj);
-signal_modulated = signal(end-fs*1.2:end)';
+signal_modulated = signal(end-fs:end)';
 end
 
