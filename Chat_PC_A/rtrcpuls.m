@@ -6,7 +6,7 @@ function [y] = rtrcpuls(a,tau,fs,span)
 % span: Defines width for truncation. Number of tau periods on either side of the peak of the pulse
 % The pulse has a one sided bandwidth, BW = (1+alpha)/(2*tau);
 
-t_positive = eps:(1/fs):span*tau;  % Replace 0 with eps (smallest +ve number MATLAB can produce) to prevent NANs
+t_positive = eps:(1/fs):span*tau;
 t = [-fliplr(t_positive(2:end)) t_positive];
 tpi = pi/tau; amtpi = tpi*(1-a); aptpi = tpi*(1 + a);
 ac = 4*a/tau; at = 16*a^2/tau^2;

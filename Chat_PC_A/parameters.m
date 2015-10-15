@@ -1,7 +1,7 @@
 %% Parameter file loading all the shared parameters between the receiver and the 
 % transmitter
 
-fs = 12e3;                                   % sampling frequency [Hz]
+fs = 44.1e3;                                   % sampling frequency [Hz]
 rb = 550;                                    % bit rate [bit/sec]
 M = 4;                                       % Number of symbols in the constellation (QPSK, M=4)
 m = log2(M);                                 % Number of bits per symbol

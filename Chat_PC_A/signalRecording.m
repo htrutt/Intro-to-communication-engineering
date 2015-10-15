@@ -9,8 +9,8 @@ threshold = 10;
 recObj = audiorecorder(fs,8,1);              % Set record object
 
 while max(cor)<threshold
-   %% Record for a small amoun of time as long as the correlation doesn't overpass our threshold
-   recordblocking(recObj,14/rb);            % We record for 2 barker sequences
+   %% Record for a small amount of time as long as the correlation doesn't overpass our threshold
+   recordblocking(recObj,14/rb);            % We record for 1 barker sequences
    signal_modulated = getaudiodata(recObj); % Get audio data from the record object
    cor=xcorr(signal_modulated, marker_modulated); %Corrolate this data with our modulated barker sequence
 end
